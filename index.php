@@ -7,10 +7,10 @@
 	header('Content-Type: application/json');
 	header("Access-Control-Allow-Origin: *");
 
-	function dbConnect(){
-		$config = @json_decode(file_get_contents("db_conf.json"), true);
+	$config = @json_decode(file_get_contents("conf.json"), true);
 
-		$db = @new mysqli($config['host'], $config['username'], $config['password'], $config['database']);
+	function dbConnect(){
+		$db = @new mysqli($config['db']['host'], $config['db']['username'], $config['db']['password'], $config['db']['database']);
 
 		if(mysqli_connect_errno()){
 			@$db->close();
@@ -23,17 +23,17 @@
 		}
 	}
 
-	define('PW_SALT_BEGIN', md5('JXx7iPG80j--jvwniYSXzC'));
-	define('PW_SALT_END', md5('bYeuaOH0MH--cUuFOlZrUQ'));
+	@define('PW_SALT_BEGIN', md5($config['pw_salt']['begin']));
+	@define('PW_SALT_END', md5($config['pw_salt']['end']));
 
-	define('TOKEN_MAX_AGE', 60*24*30);  //Minutes
-	define('TOKEN_MAX_UNUSED', 60*24*2);  //Minutes
+	@define('TOKEN_MAX_AGE', $config['token_age']['created']);
+	@define('TOKEN_MAX_UNUSED', $config['token_age']['unused']);
 
-	define('REGISTRATION_ENABLED', true);
+	@define('REGISTRATION_ENABLED', $config['registration_enabled']);
 
-	define('TAG_DELIMITER', ";");
+	@define('TAG_DELIMITER', $config['tag_delimiter']);
 
-	define('BASE_PATH', "");
+	@define('BASE_PATH', $config['base_path']);
 
 	$user_info = null;
 	$token_info = null;
@@ -430,7 +430,7 @@
 
 						if(!empty($data['password'])){
 							$pw_salt = md5(PW_SALT_BEGIN . $data['password'] . PW_SALT_END);
-							
+
 							if($pw_salt != $user_info['password']){
 								$settings_password = $pw_salt;
 								$changed = true;

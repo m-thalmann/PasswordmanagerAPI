@@ -1,0 +1,19 @@
+{
+	"db": {
+		"host": "localhost",
+		"username" : "root",
+		"password": "password",
+		"database": "passwordmanager"
+	},
+	"base_path": "",
+	"pw_salt":{
+		"begin": "JXx7iPG80j--jvwniYSXzC",
+		"end": "bYeuaOH0MH--cUuFOlZrUQ"
+	},
+	"token_age":{
+		"created": 43200,
+		"unused": 2880
+	},
+	"registration_enabled": true,
+	"tag_delimiter": ";"
+}
