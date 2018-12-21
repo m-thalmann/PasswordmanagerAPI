@@ -10,6 +10,7 @@
 	$config = @json_decode(file_get_contents("conf.json"), true);
 
 	function dbConnect(){
+		$config = $GLOBALS['config'];
 		$db = @new mysqli($config['db']['host'], $config['db']['username'], $config['db']['password'], $config['db']['database']);
 
 		if(mysqli_connect_errno()){
