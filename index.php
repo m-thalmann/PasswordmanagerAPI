@@ -408,12 +408,10 @@
 		}
 	});
 
-	$router->map( 'POST', '/settings/[:token]', function($token) use (&$user_info, $verify_auth) {
+	$router->map( 'PUT', '/settings/[:token]', function($token) use (&$user_info, $verify_auth) {
 		if($verify_auth($token)){
-			if(!empty($_POST['data'])){
-				$data = json_decode($_POST['data'], true);
-
-				if(empty($data['email']) || filter_var($data['email'], FILTER_VALIDATE_EMAIL)){
+			if(!empty($_POST['password']) || !empty($_POST['email'])){
+				if(empty($_POST['email']) || filter_var($data['email'], FILTER_VALIDATE_EMAIL)){
 					$db = dbConnect();
 
 					$query = "UPDATE users SET password=?, email=? WHERE id=?";
@@ -428,9 +426,8 @@
 
 						$changed = false;
 
-
-						if(!empty($data['password'])){
-							$pw_salt = md5(PW_SALT_BEGIN . $data['password'] . PW_SALT_END);
+						if(!empty($_POST['password'])){
+							$pw_salt = md5(PW_SALT_BEGIN . $_POST['password'] . PW_SALT_END);
 
 							if($pw_salt != $user_info['password']){
 								$settings_password = $pw_salt;
@@ -438,8 +435,8 @@
 							}
 						}
 
-						if(!empty($data['email']) && $data['email'] != $user_info['email']){
-							$settings_email = $data['email'];
+						if(!empty($_POST['email']) && $_POST['email'] != $user_info['email']){
+							$settings_email = $_POST['email'];
 							$changed = true;
 						}
 
