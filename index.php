@@ -427,9 +427,14 @@
 
 						$changed = false;
 
-						if(!empty($data['password']) && $data['password'] != $user_info['password']){
-							$settings_password = $data['password'];
-							$changed = true;
+
+						if(!empty($data['password'])){
+							$pw_salt = md5(PW_SALT_BEGIN . $data['password'] . PW_SALT_END);
+							
+							if($pw_salt != $user_info['password']){
+								$settings_password = $pw_salt;
+								$changed = true;
+							}
 						}
 
 						if(!empty($data['email']) && $data['email'] != $user_info['email']){
