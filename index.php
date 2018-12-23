@@ -384,7 +384,7 @@
 		if($verify_auth($token)){
 			$db = dbConnect();
 
-			$query = "SELECT id, created, last_ip, last_time FROM tokens WHERE userid=" . $user_info['id'];
+			$query = "SELECT id, created, last_ip, last_time, value FROM tokens WHERE userid=" . $user_info['id'] . " ORDER BY last_time DESC";
 
 			$tokens = $db->query($query);
 
@@ -392,6 +392,13 @@
 				$ret_tokens = array();
 
 				while($row = $tokens->fetch_assoc()){
+					if($row['value'] == $token){
+						$row['current'] = true;
+					}else{
+						$row['current'] = false;
+					}
+					unset($row['value']);
+
 					$ret_tokens[] = $row;
 				}
 
