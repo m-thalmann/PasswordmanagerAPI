@@ -283,6 +283,11 @@
 		exit;
 	});
 
+	$router->map('GET', '/registration_enabled', function() {
+		echo json_encode(array("value"=>REGISTRATION_ENABLED));
+		exit;
+	});
+
 	$router->map( 'GET', '/auth/[:token]', function($token) use ($verify_auth) {
 		if($verify_auth($token)){
 			echo json_encode(array("info"=>"Authenticated"));
