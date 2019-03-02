@@ -674,11 +674,14 @@
 
 					if($insert_stmt && $update_stmt){
 						$insert_stmt->bind_param("isss", $update_userid, $update_enc_key, $update_data, $update_tags);
-						$update_stmt->bind_param("ssii", $update_enc_key, $update_data, $update_tags, $update_id, $update_userid);
+						$update_stmt->bind_param("sssii", $update_enc_key, $update_data, $update_tags, $update_id, $update_userid);
 
-						$update_userid = $user_info['id'];
+                        $update_userid = $user_info['id'];
+                        
+                        $ids = [];
 
 						foreach($data as $value){
+                            $id = -1;
 							if(isset($value['id']) && isset($value['enc_key']) && isset($value['data']) && isset($value['tags'])){
 								if(is_integer($value['id'])){
 									$update_enc_key = $value['enc_key'];
@@ -690,16 +693,21 @@
 									}
 
 									if($value['id'] == -1){
-										$insert_stmt->execute();
+                                        $insert_stmt->execute();
+                                        
+                                        $id = $insert_stmt->insert_id;
 									}else{
 										$update_id = $value['id'];
-										$update_stmt->execute();
+                                        $update_stmt->execute();
+                                        
+                                        $id = $value['id'];
 									}
 								}
-							}
+                            }
+                            $ids[] = $id;
 						}
 
-						echo json_encode(array("info"=>"Updated successfully"));
+						echo json_encode($ids);
 						$insert_stmt->close();
 						$update_stmt->close();
 						$db->close();
