@@ -664,7 +664,7 @@
 	$router->map( 'POST', '/update/[:token]', function($token) use(&$user_info, $verify_auth) {
 		if($verify_auth($token)){
 			if(!empty($_POST['data'])){
-				$data = json_decode($_POST['data'], true);
+				$data = json_decode(str_replace("%2B", "+", $_POST['data']), true);
 
 				if(json_last_error() == JSON_ERROR_NONE){
 					$db = dbConnect();
