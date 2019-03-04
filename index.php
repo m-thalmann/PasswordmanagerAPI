@@ -685,7 +685,7 @@
 							if(isset($value['id']) && isset($value['enc_key']) && isset($value['data']) && isset($value['tags'])){
 								if(is_integer($value['id'])){
 									$update_enc_key = $value['enc_key'];
-									$update_data = json_encode($value['data']);
+									$update_data = $value['data'];
 									$update_tags = "";
 
 									foreach($value['tags'] as $tag){
