@@ -661,6 +661,39 @@
 		}
 	});
 
+	$router->map( 'DELETE', '/delete/[:token]', function($token) use(&$user_info, $verify_auth) {
+		if($verify_auth($token)){
+			$db = dbConnect();
+
+			$query = "DELETE FROM passwords WHERE userid=?";
+
+			$delete_stmt = $db->prepare($query);
+
+			if($delete_stmt){
+				$delete_stmt->bind_param("i", $user_info['id']);
+
+				$delete_stmt->execute();
+
+				if(!mysqli_errno($db)){
+					echo json_encode(array("info"=>"Success", "errno"=>0));
+				}else{
+					http_response_code(500);
+					echo json_encode(array("error"=>"A database-error occured"));
+				}
+
+				$delete_stmt->close();
+				$db->close();
+				exit;
+			}
+
+			$db->close();
+
+			http_response_code(500);
+			echo json_encode(array("error"=>"Error"));
+			exit;
+		}
+	});
+
 	$router->map( 'POST', '/update/[:token]', function($token) use(&$user_info, $verify_auth) {
 		if($verify_auth($token)){
 			if(!empty($_POST['data'])){
@@ -729,6 +762,7 @@
 	});
 
 	$router->map( 'OPTIONS', '*', function(){
+		header('Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS');
 		echo json_encode(array("info"=>"Passwordmanager API v1.0"));
 		exit;
 	});
