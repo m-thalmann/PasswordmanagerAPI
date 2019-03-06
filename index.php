@@ -423,7 +423,7 @@
 	$router->map( 'POST', '/settings/[:token]', function($token) use (&$user_info, $verify_auth) {
 		if($verify_auth($token)){
 			if(!empty($_POST['password']) || !empty($_POST['email'])){
-				if(empty($_POST['email']) || filter_var($data['email'], FILTER_VALIDATE_EMAIL)){
+				if(empty($_POST['email']) || filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
 					$db = dbConnect();
 
 					$query = "UPDATE users SET password=?, email=? WHERE id=?";
