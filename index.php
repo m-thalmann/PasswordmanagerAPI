@@ -40,9 +40,24 @@
 	$token_info = null;
 
 	function cleanTokens(){
+		if(TOKEN_MAX_AGE == 0 && TOKEN_MAX_UNUSED == 0){
+			return;
+		}
 		$db = dbConnect();
 
-		$query = "DELETE FROM tokens WHERE created < DATE_ADD(NOW(), INTERVAL -" . TOKEN_MAX_AGE . " MINUTE) OR last_time < DATE_ADD(NOW(), INTERVAL -" . TOKEN_MAX_UNUSED . " MINUTE)";
+		$query = "DELETE FROM tokens WHERE ";
+
+		if(TOKEN_MAX_AGE > 0){
+			$query .= "created < DATE_ADD(NOW(), INTERVAL -" . TOKEN_MAX_AGE . " MINUTE) ";
+		}
+
+		if(TOKEN_MAX_AGE > 0 && TOKEN_MAX_UNUSED > 0){
+			$query .= "OR ";
+		}
+
+		if(TOKEN_MAX_UNUSED > 0){
+			$query .= "last_time < DATE_ADD(NOW(), INTERVAL -" . TOKEN_MAX_UNUSED . " MINUTE)";
+		}
 
 		$db->query($query);
 
