@@ -704,10 +704,12 @@
 
 					$insert_stmt = $db->prepare("INSERT INTO passwords (userid, enc_key, data, tags) VALUES (?, ?, ?, ?)");
 					$update_stmt = $db->prepare("UPDATE passwords SET enc_key = ?, data = ?, tags= ? WHERE id= ? AND userid = ?");
+					$check_stmt  = $db->prepare("SELECT id FROM passwords WHERE id=?");
 
 					if($insert_stmt && $update_stmt){
 						$insert_stmt->bind_param("isss", $update_userid, $update_enc_key, $update_data, $update_tags);
 						$update_stmt->bind_param("sssii", $update_enc_key, $update_data, $update_tags, $update_id, $update_userid);
+						$check_stmt->bind_param("i", $check_id);
 
                         $update_userid = $user_info['id'];
                         
@@ -723,6 +725,15 @@
 
 									foreach($value['tags'] as $tag){
 										$update_tags .= ';' . $tag;
+									}
+
+									if($value['id'] != -1){
+										$check_id = $value['id'];
+										$check_stmt->execute();
+										
+										if($check_stmt->get_result()->num_rows != 1){
+											$value['id'] = -1;
+										}
 									}
 
 									if($value['id'] == -1){
@@ -743,6 +754,7 @@
 						echo json_encode($ids);
 						$insert_stmt->close();
 						$update_stmt->close();
+						$check_stmt->close();
 						$db->close();
 						exit;
 					}
